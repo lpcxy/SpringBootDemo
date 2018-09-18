@@ -74,7 +74,7 @@ public class DruidConfig
 		try{
 			druidDataSource.setFilters(filters);
 		}catch(Exception e){
-			LOGGER.equals("init druid dataSource error");
+			LOGGER.error("init druid dataSource error");
 		}
 		return druidDataSource;
 	}
