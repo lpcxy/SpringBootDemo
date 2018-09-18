@@ -12,9 +12,6 @@ import com.liping.domain.User;
 @Mapper
 public interface UserMapper
 {
-	@Select("select 1")
-	void Test();
-	
 	@Select("select * from t_user where id = #{id}")
 	User queryById(@Param("id")String id);
 	
