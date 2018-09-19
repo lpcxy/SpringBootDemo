@@ -21,7 +21,7 @@ import com.liping.utils.JsonUtil;
 
 @RestController
 @RequestMapping("v1")
-public class TestController
+public class UserController
 {
 	@Autowired
 	private UserInterface userService;

@@ -15,6 +15,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
+import com.alibaba.druid.pool.DruidDataSource;
+import com.liping.utils.JWTUtil;
+
 @Configuration
 @EnableTransactionManagement
 public class MyBatisConfig implements TransactionManagementConfigurer {
@@ -25,6 +28,15 @@ public class MyBatisConfig implements TransactionManagementConfigurer {
     @Bean(name = "sqlSessionFactory")
     public SqlSessionFactory sqlSessionFactoryBean() {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
+        DruidDataSource druidDataSource = (DruidDataSource)dataSource;
+        try{
+        	String username = JWTUtil.decode(druidDataSource.getUsername());
+        	String password = JWTUtil.decode(druidDataSource.getPassword());
+        	druidDataSource.setUsername(username);
+        	druidDataSource.setPassword(password);
+		}catch(Exception e){
+			LOGGER.error("jwt decode error.");
+		}
         bean.setDataSource(dataSource);
         bean.setTypeAliasesPackage("com.liping.domain");
         try
