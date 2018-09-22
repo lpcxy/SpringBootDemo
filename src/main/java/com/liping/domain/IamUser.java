@@ -3,9 +3,11 @@ package com.liping.domain;
 import java.util.Date;
 import java.util.List;
 
+import com.liping.utils.UUIDGenerator;
+
 public class IamUser
 {
-	private String id;
+	private String id = UUIDGenerator.uuid();
 	private String name;
 	private String password;
 	private List<String> roles;
@@ -54,7 +56,7 @@ public class IamUser
 	 * 对象是否非法
 	 * */
 	public Boolean isValid(){
-		return id != null && name != null && password != null;
+		return name != null && password != null;
 	}
 	
 	@Override

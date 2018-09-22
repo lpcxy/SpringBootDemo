@@ -18,23 +18,21 @@ public abstract class TokenFilter
 			return false;
 		}
 		String url = httpRequest.getRequestURI();
-		if(CommonConstans.GET_TOKEN_URL.equals(url)){		//获取token的接口不校验
+		if(CommonConstans.GET_TOKEN_URL.equals(url) || 
+				CommonConstans.REGISTER_IAM_USER_URL.equals(url)){		
 			return true;
 		}
 		String token = httpRequest.getHeader(CommonConstans.TOKEN_HEADER);
 		try{
 			IamUser user = JWTUtil.parseToken(token);
-			if(JWTUtil.isTokenExpired(user)){
-				return false;
-			}else{
-				TokenInfo.setIamUser(user);
-				TokenInfo.setUserId(user.getId());
-				TokenInfo.setUserName(user.getName());
-				TokenInfo.setRoles(user.getRoles());
-				return true;
-			}
+			TokenInfo.setIamUser(user);
+			TokenInfo.setUserId(user.getId());
+			TokenInfo.setUserName(user.getName());
+			TokenInfo.setRoles(user.getRoles());
+			return true;
 		}catch(Exception e){
 			LOGGER.equals("token is invalid");
+			httpResponse.setStatus(ErrorConstans.FORBIDEN);
 			return false;
 		}
 	}

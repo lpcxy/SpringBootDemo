@@ -4,10 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.liping.domain.User;
+import com.liping.domain.IamUser;
 import com.liping.exception.ServiceException;
-import com.liping.mapper.UserMapper;
+import com.liping.mapper.IamUserMapper;
 import com.liping.service.UserInterface;
 import com.liping.utils.ErrorConstans;
 
@@ -16,12 +15,13 @@ public class UserServiceImpl implements UserInterface
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class.getName());
 	@Autowired
-	private UserMapper userMapper;
+	private IamUserMapper iamUserMapper;
+	
 	@Override
-	public User queryUserById(String id) throws ServiceException{
+	public IamUser queryUser(String name) throws ServiceException{
 		try
 		{
-			return userMapper.queryById(id);
+			return iamUserMapper.query(name);
 		} catch (Exception e)
 		{
 			LOGGER.error("query user error, error message: " + e.getMessage());
@@ -30,26 +30,37 @@ public class UserServiceImpl implements UserInterface
 		}
 	}
 	@Override
-	public void updateUser(User user) throws ServiceException{
+	public void updateUser(IamUser user) throws ServiceException{
 		try{
-			User mysqlUser = userMapper.queryById(user.getId());
+			IamUser mysqlUser = iamUserMapper.query(user.getName());
 			if(mysqlUser == null){
-				userMapper.insert(user);
+				iamUserMapper.insert(user);
 			}else{
-				userMapper.update(user);
+				iamUserMapper.update(user.getName(), user.getPassword());
 			}
 		}catch(Exception e){
-			LOGGER.error("insert user error");
-			throw new ServiceException(ErrorConstans.INSERT_USER_ERROR, "insert user error.");
+			LOGGER.error("update user error");
+			throw new ServiceException(ErrorConstans.UPDATE_IAM_USER_ERROR, "update user error.");
 		}
 	}
 	@Override
-	public void deleteUser(String id) throws ServiceException{
+	public void deleteUser(String name) throws ServiceException{
 		try{
-			userMapper.delete(id);
+			iamUserMapper.delete(name);
 		}catch(Exception e){
 			LOGGER.error("delete user error");
 			throw new ServiceException(ErrorConstans.DELETE_USER_ERROR, "delete user error.");
+		}
+	}
+	@Override
+	public void registerIamUser(IamUser user) throws ServiceException
+	{
+		// TODO Auto-generated method stub
+		try{
+			iamUserMapper.insert(user);
+		}catch(Exception e){
+			LOGGER.error("register user error");
+			throw new ServiceException(ErrorConstans.REGISTER_IAM_USER_ERROR, "register user error");
 		}
 	}
 }

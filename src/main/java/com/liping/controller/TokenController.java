@@ -29,7 +29,7 @@ public class TokenController
 		RequestResult requestResult = new RequestResult();
 		try{
 			IamUser user = JsonUtil.parseObject(body, IamUser.class);
-			String token = tokenService.getToken(user);
+			String token = tokenService.getToken(user, httpResponse);
 			httpResponse.setHeader(CommonConstans.TOKEN_HEADER, token);
 		}catch(Exception e){
 			ErrorUtil.handleException(requestResult, e);

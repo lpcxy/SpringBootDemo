@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
@@ -79,16 +78,10 @@ public class JWTUtil
 	 * 根据解析token
 	 * */
 	public static IamUser parseToken(String token){
-		try{
-			Claims claims = getClaimsFromToken(token);
-			IamUser user =  JsonUtil.parseObject(JsonUtil.toJson(claims.get("user")), IamUser.class);
-			user.setExpiration((Date) claims.getExpiration());
-			return user;
-		}catch (Exception e) {
-			// TODO: handle exception
-			LOGGER.error("parse from token error.");
-			return null;
-		}
+		Claims claims = getClaimsFromToken(token);
+		IamUser user =  JsonUtil.parseObject(JsonUtil.toJson(claims.get("user")), IamUser.class);
+		user.setExpiration((Date) claims.getExpiration());
+		return user;
 	}
 	/**
 	 * 判断是否过期

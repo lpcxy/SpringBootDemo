@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.liping.console.RequestResult;
-import com.liping.domain.User;
+import com.liping.domain.IamUser;
 import com.liping.exception.ServiceException;
 import com.liping.service.UserInterface;
 import com.liping.utils.CommonConstans;
@@ -25,11 +25,26 @@ public class UserController
 {
 	@Autowired
 	private UserInterface userService;
-	@RequestMapping(value="/users/{id}", produces = CommonConstans.APPLICATION_JSON,method = RequestMethod.GET)
-	public String users(@PathVariable String id){
+	
+	@RequestMapping(value = "/register", produces = CommonConstans.APPLICATION_JSON, method = RequestMethod.POST)
+	public String registerIamUser(@RequestBody String userJson){
 		RequestResult requestResult = new RequestResult();
 		try{
-			 User user = userService.queryUserById(id);
+			IamUser user = JsonUtil.parseObject(userJson, IamUser.class);
+			userService.registerIamUser(user);
+		}catch(Exception e){
+			ErrorUtil.handleException(requestResult, e);
+		}
+		String result = JsonUtil.toJson(requestResult);
+		return result;
+	}
+	
+	@RequestMapping(value="/users/{name}", produces = CommonConstans.APPLICATION_JSON,method = RequestMethod.GET)
+	public String users(@PathVariable String name){
+		RequestResult requestResult = new RequestResult();
+		try{
+			 IamUser user = userService.queryUser(name);
+			 user.setPassword(null);
 			 if(user != null){
 				 List<Object> results = new ArrayList<Object>();
 				 results.add(user);
@@ -49,7 +64,10 @@ public class UserController
 			 if(userJson == null){
 				 throw new ServiceException(ErrorConstans.NULL_PARAMETER_ERROR, "parameter is null");
 			 }
-			 User user = JsonUtil.parseObject(userJson, User.class);
+			 IamUser user = JsonUtil.parseObject(userJson, IamUser.class);
+			 if(!user.isValid()){
+				 throw new ServiceException(ErrorConstans.NULL_PARAMETER_ERROR, "parameter is null");
+			 }
 			 userService.updateUser(user);
 		}catch(Exception e){
 			ErrorUtil.handleException(requestResult, e);
@@ -58,14 +76,14 @@ public class UserController
 		return result;
 	}
 	
-	@RequestMapping(value="/users/{id}", produces = CommonConstans.APPLICATION_JSON,method = RequestMethod.DELETE)
-	public String deleteUser(@PathVariable String id){
+	@RequestMapping(value="/users/{name}", produces = CommonConstans.APPLICATION_JSON,method = RequestMethod.DELETE)
+	public String deleteUser(@PathVariable String name){
 		RequestResult requestResult = new RequestResult();
 		try{
-			 if(id == null){
+			 if(name == null){
 				 throw new ServiceException(ErrorConstans.NULL_PARAMETER_ERROR, "parameter is null");
 			 }
-			 userService.deleteUser(id);
+			 userService.deleteUser(name);
 		}catch(Exception e){
 			ErrorUtil.handleException(requestResult, e);
 		}
