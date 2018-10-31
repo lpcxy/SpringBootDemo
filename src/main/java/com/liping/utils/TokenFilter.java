@@ -31,7 +31,7 @@ public abstract class TokenFilter
 			TokenInfo.setRoles(user.getRoles());
 			return true;
 		}catch(Exception e){
-			LOGGER.equals("token is invalid");
+			LOGGER.error("token is invalid");
 			httpResponse.setStatus(ErrorConstans.FORBIDEN);
 			return false;
 		}

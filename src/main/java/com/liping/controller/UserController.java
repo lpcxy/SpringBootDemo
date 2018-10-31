@@ -44,8 +44,8 @@ public class UserController
 		RequestResult requestResult = new RequestResult();
 		try{
 			 IamUser user = userService.queryUser(name);
-			 user.setPassword(null);
 			 if(user != null){
+				 user.setPassword(null);
 				 List<Object> results = new ArrayList<Object>();
 				 results.add(user);
 				 requestResult.setResults(results);
